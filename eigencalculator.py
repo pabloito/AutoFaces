@@ -20,7 +20,11 @@ def eigen_calc(a, tolerance=0.0001):
     q, r = qr_decomp(a)
     qcomp = q
     condition = True
+    i=0
     while condition:
+        print('iteration {}'.format(i))
+        i+=1
+        
         #[3]
         a = r*q
 
