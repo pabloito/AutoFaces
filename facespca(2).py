@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 
-mypath      = 'att_faces/'
+mypath      = 'att_faces/orl_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
@@ -58,6 +58,7 @@ meanimage = np.mean(images,0)
 fig, axes = plt.subplots(1,1)
 axes.imshow(np.reshape(meanimage,[versize,horsize])*255,cmap='gray')
 fig.suptitle('Imagen media')
+plt.show()
 
 #resto la media
 images  = [images[k,:]-meanimage for k in range(images.shape[0])]
@@ -71,16 +72,19 @@ eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen1,cmap='gray')
 fig.suptitle('Primera autocara')
+plt.show()
 
 eigen2 = (np.reshape(V[1,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen2,cmap='gray')
 fig.suptitle('Segunda autocara')
+plt.show()
 
 eigen3 = (np.reshape(V[2,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
-axes.imshow(eigen2,cmap='gray')
+axes.imshow(eigen3,cmap='gray')
 fig.suptitle('Tercera autocara')
+plt.show()
 
 
 nmax = V.shape[0]
@@ -105,4 +109,4 @@ axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
-
+plt.show()
