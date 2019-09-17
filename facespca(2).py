@@ -8,6 +8,8 @@ from os import listdir
 from os.path import join, isdir
 import numpy as np
 import matplotlib.pyplot as plt
+import eigencalculator as ec
+import util
 from sklearn import svm
 
 mypath      = 'att_faces/orl_faces/'
@@ -65,7 +67,8 @@ images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
-U,S,V = np.linalg.svd(images,full_matrices = False)
+c = util.getSmallestDimensionC(images)
+V,S = ec.eigen_calc(c)
 
 #Primera autocara...
 eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
