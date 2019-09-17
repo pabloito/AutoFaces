@@ -38,11 +38,18 @@ def eigen_calc(a, tolerance=0.0001):
 
         condition = (not uppertri_eq) & (not lowertri_eq)
 
-    eigen_values = np.diag(a)
-    eigen_vectors = qcomp
 
-    #todo: order eigen_vectors by eigen_values
+    #ordeno autovectores en funcion del peso de los autovalores
+    a = np.diag(a)
 
+    #argsort es ascendente aplico - para hacerlo descendente.
+    sorted_indexes = (-a).argsort()
+
+    eigen_values = a[sorted_indexes]
+    eigen_vectors = qcomp[:,sorted_indexes]
+
+    #cada columna de eigen_vectors tiene el autovector correspondiente al autovalor en la misma
+    #columna de eigen_values
     return eigen_vectors,eigen_values
 
 #TEST
