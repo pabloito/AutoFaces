@@ -15,7 +15,6 @@ def qr_decomp(a):
     #         substraction += projection(q[:,i],a_j)
     #     q[:,j]=a_j-substraction
 
-
 def eigen_calc(a, tolerance=0.0001):
     q, r = qr_decomp(a)
     qcomp = q
@@ -24,7 +23,7 @@ def eigen_calc(a, tolerance=0.0001):
     while condition:
         print('iteration {}'.format(i))
         i+=1
-        
+
         #[3]
         a = r*q
 
@@ -41,6 +40,8 @@ def eigen_calc(a, tolerance=0.0001):
 
     eigen_values = np.diag(a)
     eigen_vectors = qcomp
+
+    #todo: order eigen_vectors by eigen_values
 
     return eigen_vectors,eigen_values
 

@@ -11,3 +11,6 @@ def getSmallestDimensionC(a):
         return np.matmul(np.transpose(mat), mat)
 
     return np.matmul(mat, np.transpose(mat))
+
+def getAllAutoFaces(eigen_vec, images):
+    return np.transpose(np.matmul(np.transpose(eigen_vec),images))

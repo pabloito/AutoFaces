@@ -68,37 +68,38 @@ imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
 c = util.getSmallestDimensionC(images)
-V,S = ec.eigen_calc(c)
+eigen_vec,eigen_val = ec.eigen_calc(c)
+
+autofaces = util.getAllAutoFaces(eigen_vec,images)
 
 #Primera autocara...
-eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
+eigen1 = (np.reshape(autofaces[:,0],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen1,cmap='gray')
 fig.suptitle('Primera autocara')
 plt.show()
 
-eigen2 = (np.reshape(V[1,:],[versize,horsize]))*255
+eigen2 = (np.reshape(autofaces[:,1],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen2,cmap='gray')
 fig.suptitle('Segunda autocara')
 plt.show()
 
-eigen3 = (np.reshape(V[2,:],[versize,horsize]))*255
+eigen3 = (np.reshape(autofaces[:,2],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen3,cmap='gray')
 fig.suptitle('Tercera autocara')
 plt.show()
 
 
-nmax = V.shape[0]
-nmax = 100
+nmax = autofaces.shape[1]
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
     #Me quedo sólo con las primeras autocaras
-    B = V[0:neigen,:]
+    B = autofaces[:,0:neigen]
     #proyecto
-    improy      = np.dot(images,np.transpose(B))
-    imtstproy   = np.dot(imagetst,np.transpose(B))
+    improy      = np.dot(images,B)
+    imtstproy   = np.dot(imagetst,B)
         
     #SVM
     #entreno
