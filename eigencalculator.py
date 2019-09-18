@@ -26,7 +26,7 @@ def qr_decomp(A):
 def calculate_ith_h(a, rows, i):
     H = np.eye(rows)
     # Se calcula haux = Identidad - 2/(dot(v,v'))*(v'v)
-    e = np.zeros(len(a))
+    e = np.zeros(a.shape[0])
     e[0] = 1
     u = a + np.copysign(np.linalg.norm(a), a[0]) * e
     v = u / u[0]
