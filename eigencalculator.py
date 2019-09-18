@@ -1,7 +1,43 @@
 import numpy as np
 
-def qr_decomp(a):
-    return np.linalg.qr(a)
+
+"""
+Esta implementacion es a partir de un articulo de wikipedia
+sobre qr con reflexiones de householder (es original)
+"""
+def qr_decomp(A):
+    rows, cols = A.shape
+    # se empieza por Q = I
+    Q = np.eye(rows)
+    # todo por ahora se tiene que dar que cols<=rows (igual las matrices de covarianza son cuadradas)
+    # la idea es calcular una matriz Hi para cada columna i
+    # abajo de la diagonal
+    for i in range(cols - (rows == cols)):
+        # se calcula H_i, la matriz que multiplicando a A por izquierda
+        # vuelve nulos los elementos bajo la diagonal en la columna i
+        H_i = calculate_ith_h(A[i:, i], rows, i)
+        # se supone que la matriz Q al final sea I*H0*H1*H2...*Hcols-1 (o Hcols-2, si rows==cols)
+        Q = np.dot(Q, H_i)
+        # A al final es una matriz triangular superior, que cumple
+        # A(final) = R =  Hcols-(rows==cols) * ... * H2 * H1 * H0 * A(inicial)
+        A = np.dot(H_i, A)
+    return Q, A
+
+def calculate_ith_h(a, rows, i):
+    H = np.eye(rows)
+    # Se calcula haux = Identidad - 2/(dot(v,v'))*(v'v)
+    e = np.zeros(len(a))
+    e[0] = 1
+    u = a + np.copysign(np.linalg.norm(a), a[0]) * e
+    v = u / u[0]
+    # la H sub i es haux "embebida" en una matriz identidad
+    haux = np.eye(a.shape[0])
+    haux -= (2 / np.dot(v, v)) * np.outer(np.array(v), np.array(v))
+    H[i:, i:] = haux
+    return H
+
+#def qr_decomp:
+    #return np.linalg.qr(a)
     #todo: no se si hace falta que lo implementemos nosotros...
     #
     # m, n = a.shape
