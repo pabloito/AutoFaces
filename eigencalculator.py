@@ -32,48 +32,27 @@ def calculate_ith_h(a, rows, i):
     v = u / u[0]
     # la H sub i es haux "embebida" en una matriz identidad
     haux = np.eye(a.shape[0])
-    haux -= (2 / np.dot(v, v)) * np.outer(np.array(v), np.array(v))
+    haux -= (2 / np.dot(v, v)) * np.outer(v.transpose(), v)
     H[i:, i:] = haux
     return H
-
-#def qr_decomp:
-    #return np.linalg.qr(a)
-    #todo: no se si hace falta que lo implementemos nosotros...
-    #
-    # m, n = a.shape
-    # q = np.zeros((m, n))
-    # r = np.zeros((n, n))
-    # for j in range(n):
-    #     a_j = a[:,j]
-    #     for i in range(j):
-    #         q_i = q[:,i]
-    #         r[i,j] = np.matmul(q_i.T,a_j)
-    #         substraction += projection(q[:,i],a_j)
-    #     q[:,j]=a_j-substraction
 
 def eigen_calc(a, tolerance=0.0001):
     q, r = qr_decomp(a)
     qcomp = q
     condition = True
-    i=0
+
     while condition:
-        print('iteration {}'.format(i))
-        i+=1
-
-        #[3]
-        a = r*q
-
-        q, r = qr_decomp(a)
-
-        #[1]
+        # [3]
+        a = np.matmul(q.transpose(), a)
+        a = np.matmul(a, q)
+        q, r = np.linalg.qr(a)
+        # [1]
         qcomp = np.matmul(qcomp, q)
-
-        #[2]
+        # [2]
         uppertri_eq = np.allclose(a, np.triu(a), atol=tolerance)
         lowertri_eq = np.allclose(a, np.tril(a), atol=tolerance)
 
         condition = (not uppertri_eq) & (not lowertri_eq)
-
 
     #ordeno autovectores en funcion del peso de los autovalores
     a = np.diag(a)
@@ -82,17 +61,11 @@ def eigen_calc(a, tolerance=0.0001):
     sorted_indexes = (-a).argsort()
 
     eigen_values = a[sorted_indexes]
-    eigen_vectors = qcomp[:,sorted_indexes]
+    eigen_vectors = qcomp[:, sorted_indexes]
 
     #cada columna de eigen_vectors tiene el autovector correspondiente al autovalor en la misma
     #columna de eigen_values
-    return eigen_vectors,eigen_values
-
-#TEST
-
-a = np.matrix('2,1,0;1,2,1;0,1,2')
-print(a)
-print(eigen_calc(a))
+    return eigen_vectors, eigen_values
 
 
 # Tomado de https://en.wikipedia.org/wiki/QR_algorithm
