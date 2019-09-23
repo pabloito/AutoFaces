@@ -5,10 +5,13 @@ import numpy as np
 Esta implementacion es a partir de un articulo de wikipedia
 sobre qr con reflexiones de householder (es original)
 """
-def qr_decomp(A):
+
+##adaptacion de https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
+def qr_decompa(A):
     rows, cols = A.shape
     # se empieza por Q = I
     Q = np.eye(rows)
+    m, n = np.shape(A)
     # todo por ahora se tiene que dar que cols<=rows (igual las matrices de covarianza son cuadradas)
     # la idea es calcular una matriz Hi para cada columna i
     # abajo de la diagonal
@@ -36,22 +39,25 @@ def calculate_ith_h(a, rows, i):
     H[i:, i:] = haux
     return H
 
-def householder_QR(A):
+## adaptacion de https://www.cs.cornell.edu/~bindel/class/cs6210-f09/lec18.pdf
+def qr_decomp(A):
     m, n = np.shape(A)
-    Q = np.identity(m)
+    Q = np.eye(m)
     R = np.copy(A)
-    for j in range(n):
-        normx = np.linalg.norm(R[j:m, j])
-        s = - np.sign(R[j, j])
-        u1 = R[j, j] - s * normx
-        w = R[j:m, j].reshape((-1, 1)) / u1
-        w[0] = 1
-        tau = -s * u1 / normx
-        R[j:m, :] = R[j:m, :] - (tau * w) * np.dot(w.reshape((1, -1)), R[j:m, :])
-        Q[:, j:n] = Q[:, j:n] - (Q[:, j:m].dot(w)).dot(tau * w.transpose())
+    for i in range(n):
+        #guardo la norma (la voy a necesitar mas de una vez...)
+        nrm = np.linalg.norm(R[i:m, i])
+        u1 = R[i, i] + np.sign(R[i, i]) * nrm
+        v = R[i:m, i].reshape((-1, 1)) / u1
+        v[0] = 1
+        tau = np.sign(R[i, i]) * u1 / nrm
+        # Ahorro la multiplicacion de matrices: solo necesito restar una columna de cada matriz
+        # Esto en vez de hacer H_i * R
+        R[i:m, :] = R[i:m, :] - (tau * v) * np.dot(v.reshape((1, -1)), R[i:m, :])
+        # Esto en vez de hacer Q * H_i
+        Q[:, i:n] = Q[:, i:n] - (Q[:, i:m].dot(v)).dot(tau * v.transpose())
 
     return Q, R
-
 
 def eigen_calc(a, tolerance=0.0001):
     q, r = qr_decomp(a)
@@ -72,6 +78,7 @@ def eigen_calc(a, tolerance=0.0001):
         lowertri_eq = np.allclose(a, np.tril(a), atol=tolerance)
 
         condition = (not lowertri_eq) & (not uppertri_eq)
+        condition = True
         i = i+1
 
     #normalize
