@@ -12,7 +12,7 @@ def qr_decomp(A):
     # todo por ahora se tiene que dar que cols<=rows (igual las matrices de covarianza son cuadradas)
     # la idea es calcular una matriz Hi para cada columna i
     # abajo de la diagonal
-    for i in range(cols - (rows == cols)):
+    for i in range(n):
         # se calcula H_i, la matriz que multiplicando a A por izquierda
         # vuelve nulos los elementos bajo la diagonal en la columna i
         H_i = calculate_ith_h(A[i:, i], rows, i)
@@ -36,6 +36,23 @@ def calculate_ith_h(a, rows, i):
     H[i:, i:] = haux
     return H
 
+def householder_QR(A):
+    m, n = np.shape(A)
+    Q = np.identity(m)
+    R = np.copy(A)
+    for j in range(n):
+        normx = np.linalg.norm(R[j:m, j])
+        s = - np.sign(R[j, j])
+        u1 = R[j, j] - s * normx
+        w = R[j:m, j].reshape((-1, 1)) / u1
+        w[0] = 1
+        tau = -s * u1 / normx
+        R[j:m, :] = R[j:m, :] - (tau * w) * np.dot(w.reshape((1, -1)), R[j:m, :])
+        Q[:, j:n] = Q[:, j:n] - (Q[:, j:m].dot(w)).dot(tau * w.transpose())
+
+    return Q, R
+
+
 def eigen_calc(a, tolerance=0.0001):
     q, r = qr_decomp(a)
     qcomp = q
@@ -57,7 +74,12 @@ def eigen_calc(a, tolerance=0.0001):
         condition = (not lowertri_eq) & (not uppertri_eq)
         i = i+1
 
-    return a, qcomp
+    #normalize
+
+    for i in range(0, qcomp.shape[0]):
+        qcomp[:, i] = qcomp[:, i] / np.linalg.norm(qcomp[:, i])
+
+    return np.diag(a), qcomp
 
     #ordeno autovectores en funcion del peso de los autovalores
     a = np.diag(a)

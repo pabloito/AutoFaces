@@ -9,6 +9,7 @@ from os.path import join, isdir
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
+import eigencalculator as ec
 
 mypath      = 'att_faces/orl_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
@@ -62,13 +63,16 @@ K = K - np.dot(unoM,K) - np.dot(K,unoM) + np.dot(unoM,np.dot(K,unoM))
 
 
 #Autovalores y autovectores
-w,alpha = np.linalg.eigh(K)
+w,alpha = ec.eigen_calc(K)
+tst = np.dot(alpha, alpha.transpose())
+W, A = np.linalg.eigh(K)
+TST = np.dot(A, A.transpose())
 lambdas = w/trnno
 lambdas = w
 
 #Los autovalores vienen en orden descendente. Lo cambio 
-lambdas = np.flipud(lambdas)
-alpha   = np.fliplr(alpha)
+#lambdas = np.flipud(lambdas)
+#alpha   = np.fliplr(alpha)
 
 for col in range(alpha.shape[1]):
     alpha[:,col] = alpha[:,col]/np.sqrt(lambdas[col])
