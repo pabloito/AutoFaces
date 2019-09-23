@@ -33,6 +33,8 @@ person = np.zeros([trnno,1])
 imno = 0
 per  = 0
 for dire in onlydirs:
+    if imno >= trnno:
+        break
     for k in range(1,trnperper+1):
         a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')/255.0
         images[imno,:] = np.reshape(a,[1,areasize])
@@ -46,6 +48,8 @@ persontst = np.zeros([tstno,1])
 imno = 0
 per  = 0
 for dire in onlydirs:
+    if imno >= tstno:
+        break
     for k in range(trnperper,10):
         a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')/255.0
         imagetst[imno,:]  = np.reshape(a,[1,areasize])
@@ -67,28 +71,28 @@ images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
-c = util.getSmallestDimensionC(images)
-eigen_vec,eigen_val = ec.eigen_calc(c)
+# c = util.getSmallestDimensionC(images)
+# eigen_vec,eigen_val = ec.eigen_calc(c)
+# autofaces = util.getAllAutoFaces(eigen_vec,images)
 
-autofaces = util.getAllAutoFaces(eigen_vec,images)
+images2 = np.asarray(images)
+imagetst2 = np.asarray(imagetst)
+# Matriz de covarianza de las training images
+C = images2.dot(images2.transpose())
+# Eigenvalues eigenvectors de C (La de menor dimension)
+L, VM = ec.eigen_calc(C)
+# Calcular las autocaras como en el Paper de Turk (pag 75)
+VM = np.dot(VM.transpose(),images2)
+for i in range(0, VM.shape[0]):
+    VM[i, :] = VM[i, :] / np.linalg.norm(VM[i, :])
+autofaces = VM
+
 
 #Primera autocara...
-eigen1 = (np.reshape(autofaces[:,0],[versize,horsize]))*255
+eigen1 = (np.reshape(autofaces[0,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen1,cmap='gray')
 fig.suptitle('Primera autocara')
-plt.show()
-
-eigen2 = (np.reshape(autofaces[:,1],[versize,horsize]))*255
-fig, axes = plt.subplots(1,1)
-axes.imshow(eigen2,cmap='gray')
-fig.suptitle('Segunda autocara')
-plt.show()
-
-eigen3 = (np.reshape(autofaces[:,2],[versize,horsize]))*255
-fig, axes = plt.subplots(1,1)
-axes.imshow(eigen3,cmap='gray')
-fig.suptitle('Tercera autocara')
 plt.show()
 
 
@@ -96,10 +100,10 @@ nmax = autofaces.shape[1]
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
     #Me quedo sólo con las primeras autocaras
-    B = autofaces[:,0:neigen]
+    B = autofaces[0:neigen,:]
     #proyecto
-    improy      = np.dot(images,B)
-    imtstproy   = np.dot(imagetst,B)
+    improy      = np.dot(images,B.T)
+    imtstproy   = np.dot(imagetst,B.T)
         
     #SVM
     #entreno

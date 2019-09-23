@@ -41,32 +41,36 @@ def eigen_calc(a, tolerance=0.0001):
     qcomp = q
     condition = True
 
-    while condition:
+    i, maxiterations = 0, 50
+
+    while condition and i < maxiterations:
         # [3]
         a = np.matmul(q.transpose(), a)
         a = np.matmul(a, q)
-        q, r = np.linalg.qr(a)
+        q, r = qr_decomp(a)
         # [1]
         qcomp = np.matmul(qcomp, q)
         # [2]
         uppertri_eq = np.allclose(a, np.triu(a), atol=tolerance)
         lowertri_eq = np.allclose(a, np.tril(a), atol=tolerance)
 
-        condition = (not uppertri_eq) & (not lowertri_eq)
+        condition = (not lowertri_eq) & (not uppertri_eq)
+        i = i+1
+
+    return a, qcomp
 
     #ordeno autovectores en funcion del peso de los autovalores
     a = np.diag(a)
 
     #argsort es ascendente aplico - para hacerlo descendente.
-    sorted_indexes = (-a).argsort()
+    sorted_indexes = np.argsort(np.absolute(a))
 
     eigen_values = a[sorted_indexes]
     eigen_vectors = qcomp[:, sorted_indexes]
 
     #cada columna de eigen_vectors tiene el autovector correspondiente al autovalor en la misma
     #columna de eigen_values
-    return eigen_vectors, eigen_values
-
+    return eigen_values, eigen_vectors
 
 # Tomado de https://en.wikipedia.org/wiki/QR_algorithm
 #[1]: For a symmetric matrix A, upon convergence, AQ = QΛ, where Λ is the diagonal matrix of eigenvalues
