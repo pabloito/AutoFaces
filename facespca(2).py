@@ -57,8 +57,8 @@ for dire in onlydirs:
         imagetst[imno,:]  = np.reshape(a,[1,areasize])
         persontst[imno,0] = per
         imno += 1
-    per += 1
     trainingnames[per] = dire
+    per += 1
 
 
     
@@ -82,7 +82,7 @@ imagetst2 = np.asarray(imagetst)
 # Matriz de covarianza de las training images
 C = images2.dot(images2.transpose())
 # Eigenvalues eigenvectors de C (La de menor dimension)
-L, VM = ec.eigen_calc(C)
+L, VM = ec.eigen_calc(C, 0.01)
 # Calcular las autocaras como en el Paper de Turk (pag 75)
 VM = np.dot(VM.transpose(),images2)
 for i in range(0, VM.shape[0]):
@@ -121,7 +121,7 @@ nmax = autofaces.shape[1]
 nmax = 50
 accs = np.zeros([nmax,1])
 clf = svm.LinearSVC()
-for neigen in range(49,nmax):
+for neigen in range(10, 11):
     #Me quedo sólo con las primeras autocaras
     B = autofaces[0:neigen,:]
     #proyecto
@@ -138,7 +138,10 @@ for neigen in range(49,nmax):
     #lo que sigue es como reconoce una imagen. Es consistente pero
     #no se que onda los nros
 
-    a = np.reshape(plt.imread('./att_faces/orl_faces' + '/s1/9' + '.pgm') / 255.0, [1, areasize])
+while True:
+    print("Input image path: ")
+    path = str(input())
+    a = np.reshape(plt.imread('./att_faces/orl_faces/' + path + '.pgm') / 255.0, [1, areasize])
     a -= meanimage
     proy_test = np.dot(a, B.T)
 

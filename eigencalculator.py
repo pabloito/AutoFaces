@@ -59,7 +59,7 @@ def qr_decomp(A):
 
     return Q, R
 
-def eigen_calc(a, tolerance=0.0001):
+def eigen_calc(a, tolerance=0.001):
     q, r = qr_decomp(a)
     qcomp = q
     condition = True
@@ -70,7 +70,7 @@ def eigen_calc(a, tolerance=0.0001):
     oldvals = np.zeros(r.shape[0])
     newvals = np.ones(r.shape[0])
 
-    while b>tolerance:
+    while b > tolerance and i<maxiterations:
 
         oldvals = newvals
         a = np.matmul(q.transpose(), a)
@@ -80,7 +80,7 @@ def eigen_calc(a, tolerance=0.0001):
 
         qcomp = np.matmul(qcomp, q)
 
-
+        i+=1
 
         b = max(abs(newvals-oldvals))
 
