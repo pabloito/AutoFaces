@@ -21,9 +21,9 @@ versize     = 160
 areasize    = horsize*versize
 
 #number of figures
-personno    = 5
-trnperper   = 6
-tstperper   = 4
+personno    = 40
+trnperper   = 9
+tstperper   = 1
 trnno       = personno*trnperper
 tstno       = personno*tstperper
 
@@ -45,17 +45,20 @@ for dire in onlydirs:
 #TEST SET
 imagetst  = np.zeros([tstno,areasize])
 persontst = np.zeros([tstno,1])
+trainingnames = {}
 imno = 0
 per  = 0
+
 for dire in onlydirs:
     if imno >= tstno:
         break
-    for k in range(trnperper,10):
+    for k in range(trnperper,trnperper+tstperper):
         a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')/255.0
         imagetst[imno,:]  = np.reshape(a,[1,areasize])
         persontst[imno,0] = per
         imno += 1
     per += 1
+    trainingnames[per] = dire
 
 
     
@@ -64,7 +67,6 @@ meanimage = np.mean(images,0)
 fig, axes = plt.subplots(1,1)
 axes.imshow(np.reshape(meanimage,[versize,horsize])*255,cmap='gray')
 fig.suptitle('Imagen media')
-plt.show()
 
 #resto la media
 images  = [images[k,:]-meanimage for k in range(images.shape[0])]
@@ -91,14 +93,35 @@ autofaces = VM
 #Primera autocara...
 eigen1 = (np.reshape(autofaces[0,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
-axes.imshow(eigen1,cmap='gray')
+axes.imshow(eigen1, cmap='gray')
 fig.suptitle('Primera autocara')
+
+
+#Sda autocara...
+eigen1 = (np.reshape(autofaces[1,:],[versize,horsize]))*255
+fig, axes = plt.subplots(1,1)
+axes.imshow(eigen1, cmap='gray')
+fig.suptitle('2da autocara')
+
+#3era autocara...
+eigen1 = (np.reshape(autofaces[2,:],[versize,horsize]))*255
+fig, axes = plt.subplots(1,1)
+axes.imshow(eigen1, cmap='gray')
+fig.suptitle('3ra autocara')
+
+#4ta autocara...
+eigen1 = (np.reshape(autofaces[3,:],[versize,horsize]))*255
+fig, axes = plt.subplots(1,1)
+axes.imshow(eigen1, cmap='gray')
+fig.suptitle('4ta autocara')
+
 plt.show()
 
-
 nmax = autofaces.shape[1]
+nmax = 50
 accs = np.zeros([nmax,1])
-for neigen in range(1,nmax):
+clf = svm.LinearSVC()
+for neigen in range(49,nmax):
     #Me quedo sólo con las primeras autocaras
     B = autofaces[0:neigen,:]
     #proyecto
@@ -107,14 +130,23 @@ for neigen in range(1,nmax):
         
     #SVM
     #entreno
-    clf = svm.LinearSVC()
-    clf.fit(improy,person.ravel())
+
+    clf.fit(improy,person.ravel().reshape(-1, 1))
     accs[neigen] = clf.score(imtstproy,persontst.ravel())
     print('Precisión con {0} autocaras: {1} %\n'.format(neigen,accs[neigen]*100))
+    #todo probar el testing de imagenes
+    #lo que sigue es como reconoce una imagen. Es consistente pero
+    #no se que onda los nros
+
+    a = np.reshape(plt.imread('./att_faces/orl_faces' + '/s1/9' + '.pgm') / 255.0, [1, areasize])
+    a -= meanimage
+    proy_test = np.dot(a, B.T)
+
+    prediction = clf.predict(proy_test)
+    print(trainingnames[prediction[0]//1])
 
 fig, axes = plt.subplots(1,1)
 axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
-plt.show()

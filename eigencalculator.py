@@ -64,35 +64,39 @@ def eigen_calc(a, tolerance=0.0001):
     qcomp = q
     condition = True
 
-    i, maxiterations = 0, 50
+    i, maxiterations = 0, 1000
+    b = 1
 
-    while condition and i < maxiterations:
-        # [3]
+    oldvals = np.zeros(r.shape[0])
+    newvals = np.ones(r.shape[0])
+
+    while b>tolerance:
+
+        oldvals = newvals
         a = np.matmul(q.transpose(), a)
         a = np.matmul(a, q)
         q, r = qr_decomp(a)
-        # [1]
-        qcomp = np.matmul(qcomp, q)
-        # [2]
-        uppertri_eq = np.allclose(a, np.triu(a), atol=tolerance)
-        lowertri_eq = np.allclose(a, np.tril(a), atol=tolerance)
+        newvals = np.diag(a)
 
-        condition = (not lowertri_eq) & (not uppertri_eq)
-        condition = True
-        i = i+1
+        qcomp = np.matmul(qcomp, q)
+
+
+
+        b = max(abs(newvals-oldvals))
+
 
     #normalize
 
     for i in range(0, qcomp.shape[0]):
         qcomp[:, i] = qcomp[:, i] / np.linalg.norm(qcomp[:, i])
 
-    return np.diag(a), qcomp
+    # return np.diag(a), qcomp
 
     #ordeno autovectores en funcion del peso de los autovalores
     a = np.diag(a)
 
     #argsort es ascendente aplico - para hacerlo descendente.
-    sorted_indexes = np.argsort(np.absolute(a))
+    sorted_indexes = np.argsort(- np.absolute(a))
 
     eigen_values = a[sorted_indexes]
     eigen_vectors = qcomp[:, sorted_indexes]
