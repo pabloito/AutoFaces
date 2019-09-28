@@ -34,8 +34,8 @@ per  = 0
 trainingnames = {}
 for dire in onlydirs:
     for k in range(1,trnperper+1):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
-        images[imno,:] = (np.reshape(a,[1,areasize])-127.5)/127.5
+        tstimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
+        images[imno,:] = (np.reshape(tstimage, [1, areasize]) - 127.5) / 127.5
         person[imno,0] = per
         imno += 1
     trainingnames[per] = dire
@@ -48,8 +48,8 @@ imno = 0
 per  = 0
 for dire in onlydirs:
     for k in range(trnperper,10):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
-        imagetst[imno,:]  = (np.reshape(a,[1,areasize])-127.5)/127.5
+        tstimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
+        imagetst[imno,:]  = (np.reshape(tstimage, [1, areasize]) - 127.5) / 127.5
         persontst[imno,0] = per
         imno += 1
     per += 1
@@ -117,13 +117,13 @@ neigen = nmax-1
 while True:
     print("Insert image path: ")
     path = str(input())
-    a = np.reshape((plt.imread('./att_faces/orl_faces/' + path + '.pgm') - 127.5) / 127.5, [1, areasize])
+    tstimage = np.reshape((plt.imread('./att_faces/orl_faces/' + path + '.pgm') - 127.5) / 127.5, [1, areasize])
     # preproyeccion de a
     unoML = np.ones([1, trnno]) / trnno
-    Ka = (np.dot(a, images.T) / trnno + 1) ** degree
+    Ktestimage = (np.dot(tstimage, images.T) / trnno + 1) ** degree
     # Normalizo (esta en el paper de kpca for face recognition)
-    Ka = Ka - np.dot(unoML, K) - np.dot(Ka, unoM) + np.dot(unoML, np.dot(K, unoM))
-    aproypre = np.dot(Ka, alpha)
+    Ktestimage = Ktestimage - np.dot(unoML, K) - np.dot(Ktestimage, unoM) + np.dot(unoML, np.dot(K, unoM))
+    aproypre = np.dot(Ktestimage, alpha)
     # proyeccion de a
     aproy = aproypre[:, 0:neigen]
     prediction = clf.predict(aproy)

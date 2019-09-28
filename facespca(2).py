@@ -36,8 +36,8 @@ for dire in onlydirs:
     if imno >= trnno:
         break
     for k in range(1,trnperper+1):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')/255.0
-        images[imno,:] = np.reshape(a,[1,areasize])
+        testimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm') / 255.0
+        images[imno,:] = np.reshape(testimage, [1, areasize])
         person[imno,0] = per
         imno += 1
     per += 1
@@ -53,8 +53,8 @@ for dire in onlydirs:
     if imno >= tstno:
         break
     for k in range(trnperper,trnperper+tstperper):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')/255.0
-        imagetst[imno,:]  = np.reshape(a,[1,areasize])
+        testimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm') / 255.0
+        imagetst[imno,:]  = np.reshape(testimage, [1, areasize])
         persontst[imno,0] = per
         imno += 1
     trainingnames[per] = dire
@@ -141,9 +141,9 @@ for neigen in range(10, 11):
 while True:
     print("Insert image path: ")
     path = str(input())
-    a = np.reshape(plt.imread('./att_faces/orl_faces/' + path + '.pgm') / 255.0, [1, areasize])
-    a -= meanimage
-    proy_test = np.dot(a, B.T)
+    testimage = np.reshape(plt.imread('./att_faces/orl_faces/' + path + '.pgm') / 255.0, [1, areasize])
+    testimage -= meanimage
+    proy_test = np.dot(testimage, B.T)
 
     prediction = clf.predict(proy_test)
     print(trainingnames[prediction[0]//1])
