@@ -139,7 +139,7 @@ for neigen in range(10, 11):
     #no se que onda los nros
 
 while True:
-    print("Input image path: ")
+    print("Insert image path: ")
     path = str(input())
     a = np.reshape(plt.imread('./att_faces/orl_faces/' + path + '.pgm') / 255.0, [1, areasize])
     a -= meanimage
