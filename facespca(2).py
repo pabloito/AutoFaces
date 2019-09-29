@@ -12,16 +12,16 @@ import eigencalculator as ec
 import util
 from sklearn import svm
 
-mypath      = 'att_faces/orl_faces/'
+mypath      = 'att_faces/Fotos/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
-horsize     = 92
-versize     = 112
+horsize     = 120
+versize     = 160
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
+personno    = 5
 trnperper   = 6
 tstperper   = 4
 trnno       = personno*trnperper
