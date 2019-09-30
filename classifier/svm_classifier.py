@@ -103,7 +103,7 @@ class SVMClassifierPCA(SVMClassifier):
         for dire in directories:
             if image_number >= self.training_figures_total:
                 break
-            for k in range(1, self.training_figures_per_person + 1):
+            for k in range(1, self.training_figures_per_person + 1): #todo: creo que es sin el +1
                 a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm') / 255.0
                 self.training_images[image_number, :] = np.reshape(a, [1, self.image_area])
                 self.training_persons[image_number, 0] = person
@@ -118,7 +118,7 @@ class SVMClassifierPCA(SVMClassifier):
         for dire in directories:
             if image_number >= self.testing_figures_total:
                 break
-            for k in range(self.training_figures_per_person, 10):
+            for k in range(self.training_figures_per_person, 10): #todo: creo que aca si es con el +1
                 a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm') / 255.0
                 self.testing_images[image_number, :] = np.reshape(a, [1, self.image_area])
                 self.testing_persons[image_number, 0] = person
