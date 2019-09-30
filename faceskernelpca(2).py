@@ -9,6 +9,7 @@ from os.path import join, isdir
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
+import eigencalculator as ec
 
 mypath      = 'att_faces/orl_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
@@ -30,12 +31,14 @@ images = np.zeros([trnno,areasize])
 person = np.zeros([trnno,1])
 imno = 0
 per  = 0
+trainingnames = {}
 for dire in onlydirs:
     for k in range(1,trnperper+1):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
-        images[imno,:] = (np.reshape(a,[1,areasize])-127.5)/127.5
+        tstimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
+        images[imno,:] = (np.reshape(tstimage, [1, areasize]) - 127.5) / 127.5
         person[imno,0] = per
         imno += 1
+    trainingnames[per] = dire
     per += 1
 
 #TEST SET
@@ -45,8 +48,8 @@ imno = 0
 per  = 0
 for dire in onlydirs:
     for k in range(trnperper,10):
-        a = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
-        imagetst[imno,:]  = (np.reshape(a,[1,areasize])-127.5)/127.5
+        tstimage = plt.imread(mypath + dire + '/{}'.format(k) + '.pgm')
+        imagetst[imno,:]  = (np.reshape(tstimage, [1, areasize]) - 127.5) / 127.5
         persontst[imno,0] = per
         imno += 1
     per += 1
@@ -62,13 +65,17 @@ K = K - np.dot(unoM,K) - np.dot(K,unoM) + np.dot(unoM,np.dot(K,unoM))
 
 
 #Autovalores y autovectores
-w,alpha = np.linalg.eigh(K)
+#w,alpha = ec.eigen_calc(K)
+w,alpha = ec.eigen_calc(K, 0.01)
+tst = np.dot(alpha, alpha.transpose())
+W, A = np.linalg.eigh(K)
+TST = np.dot(A, A.transpose())
 lambdas = w/trnno
 lambdas = w
 
 #Los autovalores vienen en orden descendente. Lo cambio 
-lambdas = np.flipud(lambdas)
-alpha   = np.fliplr(alpha)
+#lambdas = np.flipud(lambdas)
+#alpha   = np.fliplr(alpha)
 
 for col in range(alpha.shape[1]):
     alpha[:,col] = alpha[:,col]/np.sqrt(lambdas[col])
@@ -92,7 +99,8 @@ imtstproypre= np.dot(Ktest,alpha)
 nmax = alpha.shape[1]
 nmax = 100
 accs = np.zeros([nmax,1])
-for neigen in range(1,nmax):
+clf = svm.LinearSVC()
+for neigen in range(nmax-1,nmax):
     #Me quedo sólo con las primeras autocaras   
     #proyecto
     improy      = improypre[:,0:neigen]
@@ -100,10 +108,28 @@ for neigen in range(1,nmax):
         
     #SVM
     #entreno
-    clf = svm.LinearSVC()
+
     clf.fit(improy,person.ravel())
     accs[neigen] = clf.score(imtstproy,persontst.ravel())
     print('Precisión con {0} autocaras: {1} %\n'.format(neigen,accs[neigen]*100))
+
+neigen = nmax-1
+while True:
+    print("Insert image path: ")
+    path = str(input())
+    tstimage = np.reshape((plt.imread('./att_faces/orl_faces/' + path + '.pgm') - 127.5) / 127.5, [1, areasize])
+    # preproyeccion de a
+    unoML = np.ones([1, trnno]) / trnno
+    Ktestimage = (np.dot(tstimage, images.T) / trnno + 1) ** degree
+    # Normalizo (esta en el paper de kpca for face recognition)
+    Ktestimage = Ktestimage - np.dot(unoML, K) - np.dot(Ktestimage, unoM) + np.dot(unoML, np.dot(K, unoM))
+    aproypre = np.dot(Ktestimage, alpha)
+    # proyeccion de a
+    aproy = aproypre[:, 0:neigen]
+    prediction = clf.predict(aproy)
+    # prediction va a tener floats, necesito pasalos a int para referenciar en trainingnames
+    print(trainingnames[prediction[0]//1])
+
 
 fig, axes = plt.subplots(1,1)
 axes.semilogy(range(nmax),(1-accs)*100)
