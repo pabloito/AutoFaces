@@ -33,8 +33,8 @@ class SVMClassifier(ABC):
         self.testing_images = None
         self.clf = None
 
-    def plot_first_eigenface(self):
-        eigen1 = (np.reshape(self.autofaces[0, :], [self.image_height, self.image_width])) * 255
+    def plot_nth_eigenface(self, n):
+        eigen1 = (np.reshape(self.autofaces[n, :], [self.image_height, self.image_width])) * 255
         fig, axes = plt.subplots(1, 1)
         axes.imshow(eigen1, cmap='gray')
         fig.suptitle('Primera autocara')
@@ -51,7 +51,7 @@ class SVMClassifier(ABC):
         return self.clf.score(testing_images_projection, self.testing_persons.ravel())
 
     def plot_score_vs_eigen_number(self):
-        nmax = self.autofaces.shape[1]
+        nmax = self.number_of_eigenvectors
         accs = np.zeros([nmax, 1])
         for neigen in range(1, nmax):
             self.train_for_eigen_number(neigen)
