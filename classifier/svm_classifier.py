@@ -12,7 +12,7 @@ import eigencalculator as ec
 class SVMClassifier(ABC):
 
     def __init__(self, path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                 training_figures_per_person, total_figures_per_person, number_of_eigenvectors):
+                  total_figures_per_person):
 
         # Initialize classifier variables
         self.path_to_folders = path_to_folders
@@ -22,10 +22,10 @@ class SVMClassifier(ABC):
         self.number_of_people = number_of_people
         self.testing_figures_per_person = testing_figures_per_person
         self.testing_figures_total = testing_figures_per_person * number_of_people
-        self.training_figures_per_person = training_figures_per_person
-        self.training_figures_total = training_figures_per_person * number_of_people
+        self.training_figures_per_person = total_figures_per_person - testing_figures_per_person
+        self.training_figures_total = self.training_figures_per_person * number_of_people
         self.total_figures_per_person = total_figures_per_person
-        self.number_of_eigenvectors = number_of_eigenvectors
+        self.number_of_eigenvectors = self.training_figures_per_person*number_of_people
         self.autofaces = None  # Will be set by PCA
         self.training_persons = None
         self.testing_persons = None
@@ -88,11 +88,11 @@ class SVMClassifier(ABC):
 
 
 class SVMClassifierPCA(SVMClassifier):
-    def __init__(self, path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                 training_figures_per_person, total_figures_per_person, number_of_eigenvectors):
+    def __init__(self, path_to_folders, image_height, image_width, number_of_people,
+                 training_figures_per_person, total_figures_per_person):
 
-        super().__init__(path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                         training_figures_per_person, total_figures_per_person, number_of_eigenvectors)
+        super().__init__(path_to_folders, image_height, image_width, number_of_people,
+                         training_figures_per_person, total_figures_per_person)
 
         # Build training set
         self.training_images = np.zeros([self.training_figures_total, self.image_area])
