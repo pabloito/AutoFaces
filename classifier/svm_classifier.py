@@ -37,7 +37,7 @@ class SVMClassifier(ABC):
         eigen1 = (np.reshape(self.autofaces[n, :], [self.image_height, self.image_width])) * 255
         fig, axes = plt.subplots(1, 1)
         axes.imshow(eigen1, cmap='gray')
-        fig.suptitle('Primera autocara')
+        fig.suptitle('Autocara #'+str(n))
         plt.show()
 
     def train_for_eigen_number(self, neigen):
