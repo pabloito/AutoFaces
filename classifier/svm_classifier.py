@@ -12,8 +12,7 @@ import eigencalculator as ec
 class SVMClassifier(ABC):
 
     def __init__(self, path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                  total_figures_per_person):
-
+                 total_figures_per_person):
         # Initialize classifier variables
         self.path_to_folders = path_to_folders
         self.image_height = image_height
@@ -25,7 +24,7 @@ class SVMClassifier(ABC):
         self.training_figures_per_person = total_figures_per_person - testing_figures_per_person
         self.training_figures_total = self.training_figures_per_person * number_of_people
         self.total_figures_per_person = total_figures_per_person
-        self.number_of_eigenvectors = self.training_figures_per_person*number_of_people
+        self.number_of_eigenvectors = self.training_figures_per_person * number_of_people
         self.autofaces = None  # Will be set by PCA
         self.training_persons = None
         self.testing_persons = None
@@ -38,21 +37,24 @@ class SVMClassifier(ABC):
         eigen1 = (np.reshape(self.autofaces[n, :], [self.image_height, self.image_width])) * 255
         fig, axes = plt.subplots(1, 1)
         axes.imshow(eigen1, cmap='gray')
-        fig.suptitle('Autocara #'+str(n))
+        fig.suptitle('Autocara #' + str(n))
         plt.show()
 
-    def train(self,amount_of_eigenvectors):
+    def train(self, amount_of_eigenvectors):
         training_images_projection = self._get_training_images_projection(amount_of_eigenvectors)
         self.clf = svm.LinearSVC()
         self.clf.fit(training_images_projection, self.training_persons.ravel())
+        print(self.clf)
+        print('trained')
 
     def score(self):
+        print(self.clf)
         testing_images_projection = self._get_testing_images_projection()
         return self.clf.score(testing_images_projection, self.testing_persons.ravel())
 
     def predict_for_image(self, path_to_image, amount_of_eigenvectors):
         image_array = self.build_image_array(path_to_image)
-        proyected_image = self.get_image_projection(image_array,amount_of_eigenvectors)
+        proyected_image = self.get_image_projection(image_array, amount_of_eigenvectors)
         # proyected_image = np.flip(proyected_image, 1)
         prediction = self.clf.predict(proyected_image)
         return prediction
@@ -61,7 +63,7 @@ class SVMClassifier(ABC):
         return self.person_map.get(number)
 
     @abstractmethod
-    def get_image_projection(self, image_array,amount_of_eigenvectors):
+    def get_image_projection(self, image_array, amount_of_eigenvectors):
         return NotImplementedError
 
     @abstractmethod
@@ -84,7 +86,6 @@ class SVMClassifierPCA(SVMClassifier):
         super().__init__(path_to_folders, image_height, image_width, number_of_people,
                          training_figures_per_person, total_figures_per_person)
 
-
         # Build training set
         self.training_images = np.zeros([self.training_figures_total, self.image_area])
         self.training_persons = np.zeros([self.training_figures_total, 1])
@@ -95,7 +96,7 @@ class SVMClassifierPCA(SVMClassifier):
             self.person_map.update({person: dire})
             if image_number >= self.training_figures_total:
                 break
-            for k in range(1, self.training_figures_per_person + 1): #todo: creo que es sin el +1
+            for k in range(1, self.training_figures_per_person + 1):  # todo: creo que es sin el +1
                 a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm') / 255.0
                 self.training_images[image_number, :] = np.reshape(a, [1, self.image_area])
                 self.training_persons[image_number, 0] = person
@@ -111,7 +112,7 @@ class SVMClassifierPCA(SVMClassifier):
             self.person_map.update({person: dire})
             if image_number >= self.testing_figures_total:
                 break
-            for k in range(self.training_figures_per_person, 10): #todo: creo que aca si es con el +1
+            for k in range(self.training_figures_per_person, 10):  # todo: creo que aca si es con el +1
                 a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm') / 255.0
                 self.testing_images[image_number, :] = np.reshape(a, [1, self.image_area])
                 self.testing_persons[image_number, 0] = person
@@ -168,23 +169,47 @@ class SVMClassifierPCA(SVMClassifier):
 
 class SVMClassifierKPCA(SVMClassifier):
 
-    def build_training_and_testing_sets(self):
-        pass
+    def __init__(self, path_to_folders, image_height, image_width, number_of_people, training_figures_per_person,
+                 total_figures_per_person, kernel_degree):
+        super().__init__(path_to_folders, image_height, image_width, number_of_people, training_figures_per_person,
+                         total_figures_per_person)
 
-    def get_images_projection(self):
-
-        return (
-            self.training_images_preprojection[:, 0:self.number_of_eigenvectors],
-            self.testing_images_preprojection[:, 0:self.number_of_eigenvectors]
-                )
-
-    def __init__(self, path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                 training_figures_per_person, total_figures_per_person, kernel_degree, number_of_eigenvectors):
-        super().__init__(path_to_folders, image_height, image_width, number_of_people, testing_figures_per_person,
-                         training_figures_per_person)
         self.kernel_degree = kernel_degree
 
-    def principal_component_analysis(self):
+        # Build training set
+        self.training_images = np.zeros([self.training_figures_total, self.image_area])
+        self.training_persons = np.zeros([self.training_figures_total, 1])
+        image_number = 0
+        person = 0
+        directories = [f for f in listdir(self.path_to_folders) if isdir(join(self.path_to_folders, f))]
+        for dire in directories:
+            self.person_map.update({person: dire})
+            if image_number >= self.training_figures_total:
+                break
+            for k in range(1, self.training_figures_per_person + 1):  # todo: creo que es sin el +1
+                a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm')
+                self.training_images[image_number, :] = (np.reshape(a, [1, self.image_area]) - 127.5) / 127.5
+                self.training_persons[image_number, 0] = person
+                image_number += 1
+            person += 1
+
+        # Build testing set
+        self.testing_images = np.zeros([self.testing_figures_total, self.image_area])
+        self.testing_persons = np.zeros([self.testing_figures_total, 1])
+        image_number = 0
+        person = 0
+        for dire in directories:
+            self.person_map.update({person: dire})
+            if image_number >= self.testing_figures_total:
+                break
+            for k in range(self.training_figures_per_person, 10):  # todo: creo que aca si es con el +1
+                a = plt.imread(self.path_to_folders + dire + '/{}'.format(k) + '.pgm')
+                self.testing_images[image_number, :] = (np.reshape(a, [1, self.image_area]) - 127.5) / 127.5
+                self.testing_persons[image_number, 0] = person
+                image_number += 1
+            person += 1
+
+        # Do KPCA
         K = (np.dot(self.training_images,
                     self.training_images.T) / self.training_figures_total + 1) ** self.kernel_degree
         # K = (K + K.T)/2.0
@@ -194,7 +219,7 @@ class SVMClassifierKPCA(SVMClassifier):
         K = K - np.dot(unoM, K) - np.dot(K, unoM) + np.dot(unoM, np.dot(K, unoM))
 
         # Autovalores y autovectores
-        w, alpha = ec.eigen_calc(K)
+        w, alpha = ec.eigen_calc(K, 0.01)
         tst = np.dot(alpha, alpha.transpose())
         W, A = np.linalg.eigh(K)
         TST = np.dot(A, A.transpose())
@@ -207,7 +232,9 @@ class SVMClassifierKPCA(SVMClassifier):
 
         for col in range(alpha.shape[1]):
             alpha[:, col] = alpha[:, col] / np.sqrt(lambdas[col])
-
+        self.K = K
+        self.alpha = alpha
+        self.unoM = unoM
         # pre-proyección
         self.training_images_preprojection = np.dot(K.T, alpha)
         unoML = np.ones([self.testing_figures_total, self.training_figures_total]) / self.training_figures_total
@@ -216,12 +243,45 @@ class SVMClassifierKPCA(SVMClassifier):
         Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
         self.testing_images_preprojection = np.dot(Ktest, alpha)
 
+    def get_image_projection(self, image_array, amount_of_eigenvectors):
+        # preproyeccion de a
+        unoML = np.ones([1, self.training_figures_total]) / self.training_figures_total
+        Ktestimage = (np.dot(image_array,
+                             self.training_images.T) / self.training_figures_total + 1) ** self.kernel_degree
+        # Normalizo (esta en el paper de kpca for face recognition)
+        Ktestimage = Ktestimage - np.dot(unoML, self.K) - np.dot(Ktestimage, self.unoM) + np.dot(unoML,
+                                                                                            np.dot(self.K, self.unoM))
+        aproypre = np.dot(Ktestimage, self.alpha)
+        # proyeccion de a
+        aproy = aproypre[:, 0: self.number_of_eigenvectors]
+        return aproy
+
+    def build_image_array(self, path_to_image):
+        a = plt.imread(path_to_image)
+        return (np.reshape(a, [1, self.image_area]) - 127.5) / 127.5
+
+    def _get_testing_images_projection(self):
+        return self.testing_images_preprojection[:, 0:self.number_of_eigenvectors]
+
+    def _get_training_images_projection(self, amount_of_eigenvectors):
+        return self.training_images_preprojection[:, 0:self.number_of_eigenvectors]
+
 
 svm_classifier_pca = SVMClassifierPCA(
-    path_to_folders='../../att_faces/Fotos/',
+    path_to_folders='/home/francisco/itba/mna/tps/AutoFaces/att_faces/Fotos/',
     image_height=160,
     image_width=120,
     number_of_people=5,
     training_figures_per_person=6,
     total_figures_per_person=10,
+)
+
+svm_classifier_kpca = SVMClassifierKPCA(
+    path_to_folders='/home/francisco/itba/mna/tps/AutoFaces/att_faces/Fotos/',
+    image_height=160,
+    image_width=120,
+    number_of_people=5,
+    training_figures_per_person=6,
+    total_figures_per_person=10,
+    kernel_degree=2
 )
