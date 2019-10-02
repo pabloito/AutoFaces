@@ -11,18 +11,18 @@ import matplotlib.pyplot as plt
 from sklearn import svm
 import eigencalculator as ec
 
-mypath      = 'att_faces/orl_faces/'
+mypath      = 'att_faces/Fotos/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
-horsize     = 92
-versize     = 112
+horsize     = 120
+versize     = 160
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
-trnperper   = 9
-tstperper   = 1
+personno    = 5
+trnperper   = 6
+tstperper   = 4
 trnno       = personno*trnperper
 tstno       = personno*tstperper
 
@@ -96,11 +96,10 @@ imtstproypre= np.dot(Ktest,alpha)
 #improypre = kpca.transform(images)
 #imtstproypre = kpca.transform(imagetst)
 
-nmax = alpha.shape[1]
-nmax = 100
+nmax = 30
 accs = np.zeros([nmax,1])
 clf = svm.LinearSVC()
-for neigen in range(nmax-1,nmax):
+for neigen in range(1,nmax):
     #Me quedo sólo con las primeras autocaras   
     #proyecto
     improy      = improypre[:,0:neigen]
@@ -112,24 +111,6 @@ for neigen in range(nmax-1,nmax):
     clf.fit(improy,person.ravel())
     accs[neigen] = clf.score(imtstproy,persontst.ravel())
     print('Precisión con {0} autocaras: {1} %\n'.format(neigen,accs[neigen]*100))
-
-neigen = nmax-1
-while True:
-    print("Insert image path: ")
-    path = str(input())
-    tstimage = np.reshape((plt.imread('./att_faces/orl_faces/' + path + '.pgm') - 127.5) / 127.5, [1, areasize])
-    # preproyeccion de a
-    unoML = np.ones([1, trnno]) / trnno
-    Ktestimage = (np.dot(tstimage, images.T) / trnno + 1) ** degree
-    # Normalizo (esta en el paper de kpca for face recognition)
-    Ktestimage = Ktestimage - np.dot(unoML, K) - np.dot(Ktestimage, unoM) + np.dot(unoML, np.dot(K, unoM))
-    aproypre = np.dot(Ktestimage, alpha)
-    # proyeccion de a
-    aproy = aproypre[:, 0:neigen]
-    prediction = clf.predict(aproy)
-    # prediction va a tener floats, necesito pasalos a int para referenciar en trainingnames
-    print(trainingnames[prediction[0]//1])
-
 
 fig, axes = plt.subplots(1,1)
 axes.semilogy(range(nmax),(1-accs)*100)

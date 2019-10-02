@@ -21,9 +21,9 @@ versize     = 160
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
-trnperper   = 9
-tstperper   = 1
+personno    = 5
+trnperper   = 6
+tstperper   = 4
 trnno       = personno*trnperper
 tstno       = personno*tstperper
 
@@ -117,11 +117,11 @@ fig.suptitle('4ta autocara')
 
 plt.show()
 
-nmax = autofaces.shape[1]
-nmax = 50
-accs = np.zeros([nmax,1])
+nmax = 30
+accs = np.zeros(nmax)
 clf = svm.LinearSVC()
-for neigen in range(10, 11):
+accs = np.transpose(accs)
+for neigen in range(1, nmax):
     #Me quedo sólo con las primeras autocaras
     B = autofaces[0:neigen,:]
     #proyecto
@@ -134,22 +134,10 @@ for neigen in range(10, 11):
     clf.fit(improy,person.ravel().reshape(-1, 1))
     accs[neigen] = clf.score(imtstproy,persontst.ravel())
     print('Precisión con {0} autocaras: {1} %\n'.format(neigen,accs[neigen]*100))
-    #todo probar el testing de imagenes
-    #lo que sigue es como reconoce una imagen. Es consistente pero
-    #no se que onda los nros
-
-while True:
-    print("Insert image path: ")
-    path = str(input())
-    testimage = np.reshape(plt.imread('./att_faces/orl_faces/' + path + '.pgm') / 255.0, [1, areasize])
-    testimage -= meanimage
-    proy_test = np.dot(testimage, B.T)
-
-    prediction = clf.predict(proy_test)
-    print(trainingnames[prediction[0]//1])
 
 fig, axes = plt.subplots(1,1)
 axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
+plt.show()
