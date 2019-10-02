@@ -218,7 +218,7 @@ class SVMClassifierKPCA(SVMClassifier):
 
 
 svm_classifier_pca = SVMClassifierPCA(
-    path_to_folders='/home/francisco/itba/mna/tps/AutoFaces/att_faces/Fotos/',
+    path_to_folders='../../att_faces/Fotos/',
     image_height=160,
     image_width=120,
     number_of_people=5,

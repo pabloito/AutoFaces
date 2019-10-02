@@ -21,7 +21,7 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
 
         #Load the UI Page
         self.setupUi(self)
-        self.setWindowIcon(QIcon('/home/francisco/itba/mna/tps/AutoFaces/gui/images/icon.jpeg'))
+        self.setWindowIcon(QIcon('../images/icon.jpeg'))
         # Set button presses
         self.browseButton.clicked.connect(self.browsePress)
         self.trainButton.clicked.connect(self.train)
