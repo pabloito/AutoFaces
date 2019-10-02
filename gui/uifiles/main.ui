@@ -14,21 +14,31 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="pcaSelector">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>380</y>
+      <x>270</x>
+      <y>360</y>
       <width>86</width>
       <height>25</height>
      </rect>
     </property>
+    <item>
+     <property name="text">
+      <string>KPCA</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>PCA</string>
+     </property>
+    </item>
    </widget>
-   <widget class="QPushButton" name="TrainButton">
+   <widget class="QPushButton" name="trainButton">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>310</y>
+      <x>390</x>
+      <y>360</y>
       <width>91</width>
       <height>25</height>
      </rect>
@@ -40,8 +50,8 @@
    <widget class="QPushButton" name="testButton">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>310</y>
+      <x>390</x>
+      <y>390</y>
       <width>91</width>
       <height>25</height>
      </rect>
@@ -50,12 +60,12 @@
      <string>Test</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="fileInput">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>280</y>
-      <width>191</width>
+      <x>60</x>
+      <y>310</y>
+      <width>421</width>
       <height>25</height>
      </rect>
     </property>
@@ -70,24 +80,95 @@
      </rect>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="eigenSelector">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>380</y>
+      <x>270</x>
+      <y>390</y>
       <width>48</width>
       <height>26</height>
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="imageWidget" native="true">
+   <widget class="QLabel" name="personLabel">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>270</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string notr="true">0</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="browseButton">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>310</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Browse</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="filename">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
-      <width>191</width>
-      <height>241</height>
+      <y>310</y>
+      <width>31</width>
+      <height>17</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>path</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>360</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PCA method</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>390</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>N° of Eigenvectors</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="imageLabel">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>171</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
