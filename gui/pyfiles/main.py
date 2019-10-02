@@ -51,7 +51,8 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         self.plot.do_update(self.categories, self.category_counts)
 
     def train(self):
-        svm_classifier_pca.train()
+        amount_of_eigenvectors = self.eigenvectors.value()
+        svm_classifier_pca.train(amount_of_eigenvectors) #todo con que traineamos?
 
     def test(self):
         self.test_files()
@@ -84,7 +85,7 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
                 full_path = os.path.join(root, file)
                 print(full_path)
                 self.set_image(full_path)
-                prediction = svm_classifier_pca.predict_for_image(full_path)
+                prediction = svm_classifier_pca.predict_for_image(full_path, self.eigenvectors.value())
                 predicted_category = svm_classifier_pca.map_person(prediction[0])
                 self.personLabel.setText(predicted_category)
                 self.update_categories(predicted_category)

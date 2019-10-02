@@ -41,8 +41,8 @@ class SVMClassifier(ABC):
         fig.suptitle('Autocara #'+str(n))
         plt.show()
 
-    def train(self):
-        training_images_projection = self._get_training_images_projection()
+    def train(self,amount_of_eigenvectors):
+        training_images_projection = self._get_training_images_projection(amount_of_eigenvectors)
         self.clf = svm.LinearSVC()
         self.clf.fit(training_images_projection, self.training_persons.ravel())
 
@@ -50,9 +50,9 @@ class SVMClassifier(ABC):
         testing_images_projection = self._get_testing_images_projection()
         return self.clf.score(testing_images_projection, self.testing_persons.ravel())
 
-    def predict_for_image(self, path_to_image):
+    def predict_for_image(self, path_to_image, amount_of_eigenvectors):
         image_array = self.build_image_array(path_to_image)
-        proyected_image = self.get_image_projection(image_array)
+        proyected_image = self.get_image_projection(image_array,amount_of_eigenvectors)
         # proyected_image = np.flip(proyected_image, 1)
         prediction = self.clf.predict(proyected_image)
         return prediction
@@ -61,7 +61,7 @@ class SVMClassifier(ABC):
         return self.person_map.get(number)
 
     @abstractmethod
-    def get_image_projection(self, image_array):
+    def get_image_projection(self, image_array,amount_of_eigenvectors):
         return NotImplementedError
 
     @abstractmethod
@@ -73,7 +73,7 @@ class SVMClassifier(ABC):
         return NotImplementedError
 
     @abstractmethod
-    def _get_training_images_projection(self):
+    def _get_training_images_projection(self, amount_of_eigenvectors):
         return NotImplementedError
 
 
@@ -139,8 +139,8 @@ class SVMClassifierPCA(SVMClassifier):
             VM[i, :] = VM[i, :] / np.linalg.norm(VM[i, :])
         self.autofaces = VM
 
-    def _get_training_images_projection(self):
-        B = self.autofaces[0:self.number_of_eigenvectors, :]
+    def _get_training_images_projection(self, amount_of_eigenvectors):
+        B = self.autofaces[0:amount_of_eigenvectors, :]
         return np.dot(self.training_images, B.T)
 
     def _get_testing_images_projection(self):
@@ -154,8 +154,8 @@ class SVMClassifierPCA(SVMClassifier):
         array[0, :] = array[0, :] - self.mean_image
         return array
 
-    def get_image_projection(self, image_array):
-        B = self.autofaces[0:self.number_of_eigenvectors, :]
+    def get_image_projection(self, image_array, amount_of_eigenvectors):
+        B = self.autofaces[0:amount_of_eigenvectors, :]
         # proyecto
         return np.dot(image_array, B.T)
 

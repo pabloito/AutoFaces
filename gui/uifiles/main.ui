@@ -161,7 +161,7 @@
      <string>stop</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="eigenvectors">
     <property name="geometry">
      <rect>
       <x>150</x>
