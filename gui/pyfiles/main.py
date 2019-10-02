@@ -10,7 +10,7 @@ from gui.pyfiles.MainWindow import Ui_FaceRecognizer3000
 
 import os
 
-from classifier.svm_classifier import svm_classifier_pca
+from classifier.svm_classifier import svm_classifier_pca, svm_classifier_kpca
 from gui.pyfiles.plotting import PlotCanvas
 
 
@@ -27,6 +27,7 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         self.trainButton.clicked.connect(self.train)
         self.testButton.clicked.connect(self.test)
         self.stopButton.clicked.connect(self.stopAction)
+        self.pcaSelector.currentTextChanged.connect(self.set_classifier)
 
         # Images picked up
         self.files = None
@@ -47,6 +48,9 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         # Add frame to photo
         self.imageLabel.setLineWidth(3)
 
+        # Add placeholder for classifier
+        self.classifier = self.set_classifier()
+
     def reset_graph(self):
         # Classified counts for each category
         self.categories = []
@@ -59,7 +63,7 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
 
     def train(self):
         amount_of_eigenvectors = self.eigenvectors.value()
-        svm_classifier_pca.train(amount_of_eigenvectors) #todo con que traineamos?
+        self.classifier.train(amount_of_eigenvectors) #todo con que traineamos?
 
     def test(self):
         self.reset_graph()
@@ -93,8 +97,8 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
                 full_path = os.path.join(root, file)
                 print(full_path)
                 self.set_image(full_path)
-                prediction = svm_classifier_pca.predict_for_image(full_path, self.eigenvectors.value())
-                predicted_category = svm_classifier_pca.map_person(prediction[0])
+                prediction = self.classifier.predict_for_image(full_path, self.eigenvectors.value())
+                predicted_category = self.classifier.map_person(prediction[0])
                 self.personLabel.setText(predicted_category)
                 self.update_categories(predicted_category)
                 self.plot_graph()
@@ -120,6 +124,14 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         except ValueError:
             self.categories.append(predicted_category)
             self.category_counts.append(1)
+
+    def set_classifier(self):
+        if self.pcaSelector.currentText() == 'KPCA':
+            print('hi')
+            return svm_classifier_kpca
+        if self.pcaSelector.currentText() == 'PCA':
+            print('ho')
+            return svm_classifier_pca
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

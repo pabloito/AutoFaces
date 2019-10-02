@@ -44,11 +44,8 @@ class SVMClassifier(ABC):
         training_images_projection = self._get_training_images_projection(amount_of_eigenvectors)
         self.clf = svm.LinearSVC()
         self.clf.fit(training_images_projection, self.training_persons.ravel())
-        print(self.clf)
-        print('trained')
 
     def score(self):
-        print(self.clf)
         testing_images_projection = self._get_testing_images_projection()
         return self.clf.score(testing_images_projection, self.testing_persons.ravel())
 
