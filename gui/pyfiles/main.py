@@ -35,17 +35,24 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         self.should_stop = False
         self.is_stopped = False
 
-        # Classified counts for each category
         self.categories = []
         self.category_counts = []
-        self.plot = None
 
         # Plot initial graph
         self.plot = PlotCanvas(self, width=3.2, height=2.7, labels=self.categories, counts=self.category_counts)
         self.plot.move(300, 0)
 
+        self.reset_graph()
+
         # Add frame to photo
         self.imageLabel.setLineWidth(3)
+
+    def reset_graph(self):
+        # Classified counts for each category
+        self.categories = []
+        self.category_counts = []
+        self.plot.ax.clear()
+        self.plot_graph()
 
     def plot_graph(self):
         self.plot.do_update(self.categories, self.category_counts)
@@ -55,6 +62,7 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         svm_classifier_pca.train(amount_of_eigenvectors) #todo con que traineamos?
 
     def test(self):
+        self.reset_graph()
         self.test_files()
 
     def stopAction(self):
