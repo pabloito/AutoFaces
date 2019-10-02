@@ -112,10 +112,22 @@ for neigen in range(1,nmax):
     accs[neigen] = clf.score(imtstproy,persontst.ravel())
     print('Precisión con {0} autocaras: {1} %\n'.format(neigen,accs[neigen]*100))
 
-fig, axes = plt.subplots(1,1)
-axes.semilogy(range(nmax),(1-accs)*100)
-axes.set_xlabel('No. autocaras')
-axes.grid(which='Both')
-fig.suptitle('Error')
+x=range(1,nmax+1)
+y=(1-accs)*100
+
+plt.plot(x, y, 'go--', linewidth=2, markersize=12)
+plt.xlabel('Autocaras')
+plt.ylabel('Error')
+plt.title('KPCA')
+plt.xticks(np.arange(0, nmax+0.001, step=nmax/10))
+plt.yticks(np.arange(0, 100+0.001, step=10))
+plt.grid(color='black', linestyle='-', linewidth=0.2)
+plt.show()
+
+# fig, axes = plt.subplots(1,1)
+# axes.semilogy(range(nmax),)
+# axes.set_xlabel('No. autocaras')
+# axes.grid(which='Both')
+# fig.suptitle('Error')
 plt.show()
 
