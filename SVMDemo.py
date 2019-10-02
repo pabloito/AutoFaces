@@ -2,11 +2,13 @@ from classifier.svm_classifier import svm_classifier_pca
 
 
 svm_classifier_pca.train()
+hits = 0
+total = 0
 for name in svm_classifier_pca.person_map.values():
     for i in range(1, 11):
-        prediction = svm_classifier_pca.predict_for_image(f'att_faces/Fotos/{name}/{i}.pgm')
-        print(f'got {svm_classifier_pca.map_person(prediction[0])}, expected {name}')
+        prediction = svm_classifier_pca.predict_for_image(f'/home/francisco/itba/mna/tps/AutoFaces/att_faces/Fotos/pablo/4.pgm')
+        if svm_classifier_pca.map_person(prediction[0]) == name:
+            hits += 1
+        total += 1
 
-score = svm_classifier_pca.score()
-print(score)
 

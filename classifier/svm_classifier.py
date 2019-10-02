@@ -48,29 +48,12 @@ class SVMClassifier(ABC):
 
     def score(self):
         testing_images_projection = self._get_testing_images_projection()
-        print(f'testing images projection dimensions {testing_images_projection.shape}')
         return self.clf.score(testing_images_projection, self.testing_persons.ravel())
-
-    def plot_score_vs_eigen_number(self):
-        nmax = self.number_of_eigenvectors
-        accs = np.zeros([nmax, 1])
-        for neigen in range(1, nmax):
-            self.train_for_eigen_number(neigen)
-            accs[neigen] = self.score()
-            print('Precisión con {0} autocaras: {1} %\n'.format(neigen, accs[neigen] * 100))
-
-        fig, axes = plt.subplots(1, 1)
-        axes.semilogy(range(nmax), (1 - accs) * 100)
-        axes.set_xlabel('No. autocaras')
-        axes.grid(which='Both')
-        fig.suptitle('Error')
-        plt.show()
 
     def predict_for_image(self, path_to_image):
         image_array = self.build_image_array(path_to_image)
         proyected_image = self.get_image_projection(image_array)
         # proyected_image = np.flip(proyected_image, 1)
-        print(f'tpredict dimensions {proyected_image.shape}')
         prediction = self.clf.predict(proyected_image)
         return prediction
 
@@ -168,7 +151,7 @@ class SVMClassifierPCA(SVMClassifier):
         array = np.zeros([1, self.image_area])
         a = plt.imread(path_to_image) / 255.0
         array[0, :] = np.reshape(a, [1, self.image_area])
-        array[0, :] - self.mean_image
+        array[0, :] = array[0, :] - self.mean_image
         return array
 
     def get_image_projection(self, image_array):
@@ -235,7 +218,7 @@ class SVMClassifierKPCA(SVMClassifier):
 
 
 svm_classifier_pca = SVMClassifierPCA(
-    path_to_folders='att_faces/Fotos/',
+    path_to_folders='/home/francisco/itba/mna/tps/AutoFaces/att_faces/Fotos/',
     image_height=160,
     image_width=120,
     number_of_people=5,

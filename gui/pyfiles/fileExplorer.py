@@ -35,6 +35,7 @@ class App(QWidget):
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
+        options &= QFileDialog.Directory
         files, _ = QFileDialog.getOpenFileNames(self, "QFileDialog.getOpenFileNames()", "",
                                                 "All Files (*);;Python Files (*.py)", options=options)
         if files:

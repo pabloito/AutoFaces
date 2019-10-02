@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>FaceRecognizer3000</class>
+ <widget class="QMainWindow" name="FaceRecognizer3000">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>637</width>
     <height>480</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <widget class="QComboBox" name="pcaSelector">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>150</x>
       <y>360</y>
       <width>86</width>
       <height>25</height>
@@ -37,7 +37,7 @@
    <widget class="QPushButton" name="trainButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>250</x>
       <y>360</y>
       <width>91</width>
       <height>25</height>
@@ -50,8 +50,8 @@
    <widget class="QPushButton" name="testButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>390</y>
+      <x>350</x>
+      <y>360</y>
       <width>91</width>
       <height>25</height>
      </rect>
@@ -63,9 +63,9 @@
    <widget class="QLineEdit" name="fileInput">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>90</x>
       <y>310</y>
-      <width>421</width>
+      <width>391</width>
       <height>25</height>
      </rect>
     </property>
@@ -80,16 +80,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QSpinBox" name="eigenSelector">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>390</y>
-      <width>48</width>
-      <height>26</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="personLabel">
     <property name="geometry">
      <rect>
@@ -100,7 +90,7 @@
      </rect>
     </property>
     <property name="text">
-     <string notr="true">0</string>
+     <string notr="true"/>
     </property>
    </widget>
    <widget class="QPushButton" name="browseButton">
@@ -121,18 +111,18 @@
      <rect>
       <x>20</x>
       <y>310</y>
-      <width>31</width>
+      <width>61</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>path</string>
+     <string>directory</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>60</x>
       <y>360</y>
       <width>91</width>
       <height>17</height>
@@ -140,19 +130,6 @@
     </property>
     <property name="text">
      <string>PCA method</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>390</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>N° of Eigenvectors</string>
     </property>
    </widget>
    <widget class="QLabel" name="imageLabel">
@@ -171,13 +148,49 @@
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="stopButton">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>360</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>stop</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>390</y>
+      <width>48</width>
+      <height>26</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>390</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>N° of eigenvectors</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
+     <width>637</width>
      <height>22</height>
     </rect>
    </property>
