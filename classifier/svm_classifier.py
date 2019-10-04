@@ -250,7 +250,7 @@ class SVMClassifierKPCA(SVMClassifier):
                                                                                             np.dot(self.K, self.unoM))
         aproypre = np.dot(Ktestimage, self.alpha)
         # proyeccion de a
-        aproy = aproypre[:, 0: self.number_of_eigenvectors]
+        aproy = aproypre[:, 0: amount_of_eigenvectors]
         return aproy
 
     def build_image_array(self, path_to_image):
@@ -261,7 +261,7 @@ class SVMClassifierKPCA(SVMClassifier):
         return self.testing_images_preprojection[:, 0:self.number_of_eigenvectors]
 
     def _get_training_images_projection(self, amount_of_eigenvectors):
-        return self.training_images_preprojection[:, 0:self.number_of_eigenvectors]
+        return self.training_images_preprojection[:, 0:amount_of_eigenvectors]
 
 
 svm_classifier_pca = SVMClassifierPCA(
