@@ -49,7 +49,8 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
         self.imageLabel.setLineWidth(3)
 
         # Add placeholder for classifier
-        self.classifier = self.set_classifier()
+        self.classifier = None
+        self.set_classifier()
 
     def reset_graph(self):
         # Classified counts for each category
@@ -128,10 +129,10 @@ class FaceRecognizer3000(QtWidgets.QMainWindow, Ui_FaceRecognizer3000):
     def set_classifier(self):
         if self.pcaSelector.currentText() == 'KPCA':
             print('hi')
-            return svm_classifier_kpca
+            self.classifier = svm_classifier_kpca
         if self.pcaSelector.currentText() == 'PCA':
             print('ho')
-            return svm_classifier_pca
+            self.classifier = svm_classifier_pca
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
